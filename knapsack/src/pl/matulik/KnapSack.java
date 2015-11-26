@@ -1,7 +1,6 @@
 package pl.matulik;
 
-import com.softtechdesign.ga.GAException;
-import com.softtechdesign.ga.GAStringsSeq;
+import com.softtechdesign.ga.*;
 
 /**
  * Created by matulik on 26.11.2015.
@@ -36,4 +35,33 @@ public class KnapSack extends GAStringsSeq {
         t.join();
     }
 
+    @Override
+    protected double getFitness(int i) {
+        ChromStrings chromosome = this.getChromosome(i);
+
+//        double[] processorsTime = new double[LoadData.processes_count];
+
+        double maxTime;
+
+        for (int tasks = 0; tasks < chromosomeDim; tasks++) {
+
+            String processor = chromosome.getGene(tasks);
+
+            String[] temp = processor.split(" ");
+            int processorId = Integer.valueOf(temp[0]) - 1;
+
+            processorsTime[processorId] += LoadData.getProcTime(tasks, processorId + 1);
+        }
+
+        maxTime = processorsTime[0];
+
+        for (double time : processorsTime) {
+
+            if (maxTime < time) {
+                maxTime = time;
+            }
+        }
+
+        return -maxTime;
+    }
 }
